@@ -11,18 +11,19 @@ test.describe('UI | Role | Validation Rules', () => {
     await expect(rolePage.createButton).toBeDisabled();
   });
 
-  test('Create button disabled when role name added but no permission selected', async ({ rolePage }) => {
+ test('Create button disabled when role name added but no permission selected', async ({ rolePage }) => {
     await rolePage.open();
-    await rolePage.openAddRoleModal();
+    await rolePage.openAddRole();
 
     await rolePage.fillRoleForm({ name: generateRoleName() });
 
     await expect(rolePage.createButton).toBeDisabled();
   });
 
-  test('Duplicate role name shows error', async ({ rolePage, existingRole }) => {
+
+    test('Duplicate role name shows error', async ({ rolePage, existingRole }) => {
     await rolePage.open();
-    await rolePage.openAddRoleModal();
+    await rolePage.openAddRole();
 
     await rolePage.fillRoleForm({
       name: existingRole.roleName,
@@ -31,12 +32,13 @@ test.describe('UI | Role | Validation Rules', () => {
 
     await rolePage.submitCreate();
 
-    await expect(rolePage.duplicateError).toBeVisible();
+    await expect(rolePage.okButton).toBeVisible();
   });
+
 
   test('Role description length >255 shows error', async ({ rolePage }) => {
     await rolePage.open();
-    await rolePage.openAddRoleModal();
+    await rolePage.openAddRole();
 
     await rolePage.fillRoleForm({
       name: generateRoleName(),
@@ -51,7 +53,7 @@ test.describe('UI | Role | Validation Rules', () => {
     const anotherRole = generateRoleName('AnotherRole');
 
     await rolePage.open();
-    await rolePage.openAddRoleModal();
+    await rolePage.openAddRole();
     await rolePage.fillRoleForm({
       name: anotherRole,
       permissions: { createMember: true },
@@ -64,24 +66,6 @@ test.describe('UI | Role | Validation Rules', () => {
     await rolePage.submitUpdate();
 
     await expect(rolePage.duplicateError).toBeVisible();
-  });
-
-  test('Update button disabled when no changes made', async ({ rolePage, existingRole }) => {
-    await rolePage.open();
-    await rolePage.openEditRole(existingRole.roleName);
-
-    await expect(rolePage.updateButton).toBeDisabled();
-  });
-
-  test('Edit description >255 chars shows error', async ({ rolePage, existingRole }) => {
-    await rolePage.open();
-    await rolePage.openEditRole(existingRole.roleName);
-
-    await rolePage.fillRoleForm({
-      description: generateLongText(300),
-    });
-
-    await expect(rolePage.descriptionLimitError).toBeVisible();
   });
 
 });

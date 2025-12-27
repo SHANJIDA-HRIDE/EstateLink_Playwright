@@ -5,26 +5,31 @@ class RolePage {
   constructor(page) {
     this.page = page;
 
-    // Role form
+ // Buttons
     this.addRoleButton = page.getByRole('button', { name: 'Add Role' });
-    this.roleNameInput = page.locator('input[name="role_name"]');
-    this.roleDescriptionTextarea = page.locator('textarea[name="role_description"]');
-    this.createMemberRoleCheckbox = page.getByText('Create Member');
-    this.editMemberRoleCheckbox = page.getByText('Edit Member');
     this.createButton = page.getByRole('button', { name: 'Create' });
     this.updateButton = page.getByRole('button', { name: 'Update' });
-    this.okButton = page.getByRole('button', { name: 'OK' });
     this.confirmButton = page.getByRole('button', { name: 'Confirm' });
-
-    // Search & edit
-    this.searchInput = page.getByPlaceholder('Search list...');
+    this.okButton = page.getByRole('button', { name: 'OK' });
     this.editRoleButton = page.getByRole('button', { name: 'Edit' });
-    this.updateSuccessMessage = page.getByText('Your Role has been successfully updated.');
-    this.viewRoleLink = page.locator('div:text-is("View Role")');
-    this.permissionsHeader = page.getByRole('columnheader', { name: 'Permissions' });
 
-    // Filter + Active/Inactive
-    this.statusFilterButton = page.getByRole('button', { name: 'Status' });
+    // Inputs
+    this.roleNameInput = page.locator('input[name="role_name"]');
+    this.roleDescriptionTextarea = page.locator('textarea[name="role_description"]');
+
+    // Permissions
+    this.createMemberCheckbox = page.getByText('Create Member');
+    this.editMemberCheckbox = page.getByText('Edit Member');
+
+    // Search
+    this.searchInput = page.getByPlaceholder('Search list...');
+
+    // Messages
+this.roleForm = page.locator('form');
+    this.duplicateError = this.roleForm.locator('p', { hasText: 'A role with this name already exists' });
+    this.descriptionLimitError = page.getByText(
+      'Role description cannot exceed 255 characters'
+    );
 
     // Table rows
     this.roleRows = page.locator('tr'); // all role rows
@@ -117,6 +122,42 @@ async toggleFirstRoleStatusDynamic(roleName) {
   await this.permissionsHeader.waitFor({ state: 'visible', timeout: 10000 });
 }
 
+  async openAddRole() {
+    await this.addRoleButton.click();
+  }
+
+
+async fillRoleForm({ name, description, permissions = {} }) {
+    if (name !== undefined) await this.roleNameInput.fill(name);
+    if (description !== undefined)
+      await this.roleDescriptionTextarea.fill(description);
+
+    if (permissions.createMember === true)
+      await this.createMemberCheckbox.check();
+    if (permissions.createMember === false)
+      await this.createMemberCheckbox.uncheck();
+
+    if (permissions.editMember === true)
+      await this.editMemberCheckbox.check();
+    if (permissions.editMember === false)
+      await this.editMemberCheckbox.uncheck();
+  }
+
+  async openEditRole(roleName) {
+    await this.searchInput.fill(roleName);
+    await this.page.locator(`tr:has-text("${roleName}")`).first().click();
+    await this.editRoleButton.click();
+    await this.editMemberCheckbox.click();
+  }
+
+  async submitCreate() {
+    await this.createButton.click();
+  }
+
+  async submitUpdate() {
+    await this.updateButton.click();
+    await this.confirmButton.click();
+  }
 
 }
 
