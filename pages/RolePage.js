@@ -23,16 +23,22 @@ class RolePage {
 
     // Search
     this.searchInput = page.getByPlaceholder('Search list...');
+    this.viewRoleLink = page.locator('div:text-is("View Role")');
+    this.permissionsHeader = page.getByRole('columnheader', { name: 'Permissions' });
 
     // Messages
 this.roleForm = page.locator('form');
     this.duplicateError = this.roleForm.locator('p', { hasText: 'A role with this name already exists' });
     this.descriptionLimitError = page.getByText(
-      'Role description cannot exceed 255 characters'
+      'Role description cannot exceed 255 characters');
+      this.updateSuccessMessage = page.getByText(
+      'Your Role has been successfully updated.'
     );
 
     // Table rows
     this.roleRows = page.locator('tr'); // all role rows
+
+
   }
 
   // ===================== Navigation =====================
@@ -47,7 +53,7 @@ this.roleForm = page.locator('form');
     await this.addRoleButton.click();
     await this.roleNameInput.fill(roleName);
     await this.roleDescriptionTextarea.fill(roleDescription);
-    await this.createMemberRoleCheckbox.check();
+    await this.createMemberCheckbox.click();
     await this.createButton.click();
     await this.okButton.click();
   }
@@ -68,20 +74,18 @@ this.roleForm = page.locator('form');
 
     if (permissions.createMember !== undefined) {
       permissions.createMember
-        ? await this.createMemberRoleCheckbox.check()
-        : await this.createMemberRoleCheckbox.uncheck();
+        ? await this.createMemberCheckbox.check()
+        : await this.createMemberCheckbox.uncheck();
     }
     if (permissions.editMember !== undefined) {
       permissions.editMember
-        ? await this.editMemberRoleCheckbox.check()
-        : await this.editMemberRoleCheckbox.uncheck();
+        ? await this.editMemberCheckbox.check()
+        : await this.editMemberCheckbox.uncheck();
     }
 
     await this.updateButton.click();
     await this.confirmButton.click();
-      await this.updateSuccessMessage.waitFor({ state: 'visible' });
-;
-
+    await this.updateSuccessMessage.waitFor({ state: 'visible' });
     await this.okButton.click();
 
     await this.viewRoleLink.click();

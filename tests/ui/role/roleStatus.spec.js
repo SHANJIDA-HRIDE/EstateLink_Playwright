@@ -1,4 +1,4 @@
-const { test, expect } = require('../../../fixtures/roleFixture');
+const { test,expect } = require('../../../fixtures/rolefixture');
 
 test.describe('UI | Role | Search → Edit → Toggle Active/Inactive', () => {
   test('Search role and toggle Active/Inactive status dynamically', async ({ rolePage }) => {
