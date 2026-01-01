@@ -1,5 +1,5 @@
 function getRandomNumber() {
-  return Math.floor(Math.random()*10); // random 0-99999
+  return Math.floor(Math.random()*3); // random 0-99999
 }
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
   },
 
     groupData: {
-    groupName: `AutoGrpup_${Date.now()}_${getRandomNumber()}`,
+    groupName: `TGp_${Date.now()}_${getRandomNumber()}`,
     groupDescription: 'This is an automated test Group.',
   },
 

@@ -9,6 +9,7 @@ class GroupPage {
     this.addGroupButton = page.getByRole('button', { name: 'Add Group' });
     this.groupNameInput = page.locator('input[name="group_name"]');
     this.groupDescriptionTextarea = page.locator('textarea[name="group_description"]');
+    this.lastTableRow = page.locator('tbody tr').last();
     this.createButton = page.getByRole('button', { name: 'Create' });
     this.updateButton = page.getByRole('button', { name: 'Update' });
     this.okButton = page.getByRole('button', { name: 'OK' });
@@ -34,15 +35,15 @@ class GroupPage {
     await this.addGroupButton.click();
     await this.groupNameInput.fill(groupName);
     await this.groupDescriptionTextarea.fill(groupDescription);
+    await this.lastTableRow.click();
     await this.createButton.click();
     await this.okButton.click();
   }
 
   async searchGroup(groupName) {
     await this.searchInput.fill(groupName);
-    const groupRow = this.groupRows.filter({ hasText: groupName }).first();
-    await groupRow.waitFor({ state: 'visible', timeout: 10000 });
-    return groupRow;
+    await expect(this.page.locator(`tr:has-text("${groupName}")`).first()).toBeVisible();
+    return this.page.locator(`tr:has-text("${groupName}")`).first();
   }
 
   async editGroup(currentGroupName, newGroupName, newDescription) {
