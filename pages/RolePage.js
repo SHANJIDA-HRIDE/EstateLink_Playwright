@@ -27,13 +27,11 @@ class RolePage {
     this.permissionsHeader = page.getByRole('columnheader', { name: 'Permissions' });
 
     // Messages
-this.roleForm = page.locator('form');
+    this.roleForm = page.locator('form');
     this.duplicateError = this.roleForm.locator('p', { hasText: 'A role with this name already exists' });
-    this.descriptionLimitError = page.getByText(
-      'Role description cannot exceed 255 characters');
-      this.updateSuccessMessage = page.getByText(
-      'Your Role has been successfully updated.'
-    );
+
+    this.descriptionLimitError = page.getByText('Role description cannot exceed 255 characters');
+    this.updateSuccessMessage = page.getByText('Your Role has been successfully updated.');
 
     // Table rows
     this.roleRows = page.locator('tr'); // all role rows

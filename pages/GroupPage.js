@@ -26,6 +26,15 @@ class GroupPage {
     // Table rows
     this.groupRows = page.locator('tr');
     this.groupDescriptionHeader = page.getByRole('columnheader', { name: 'Group Description' });
+    
+    // ===== Errors =====
+    this.duplicateError = page.getByText(
+      'group with this group name already exists.'
+    );
+    this.descriptionLimitError = page.getByText(
+  'Ensure this field has no more than 255 characters'
+);
+  
   }
 
 
@@ -105,6 +114,40 @@ class GroupPage {
     // 7️⃣ Back to group list
     await this.backToGroupList.click();
   }
+
+
+async openAddGroup() {
+    await this.addGroupButton.click();
+  }
+
+  // ================= Form Helpers =================
+  async fillGroupForm({ name, description }) {
+    if (name !== undefined) await this.groupNameInput.fill(name);
+    if (description !== undefined)
+      await this.groupDescriptionTextarea.fill(description);
+  }
+
+  async submitCreate() {
+    await this.createButton.click();
+  }
+
+  async submitUpdate() {
+    await this.updateButton.click();
+    await this.okButton.click();
+  }
+
+
+
+async openEditGroup(groupName) {
+  // Search group
+  await this.searchInput.fill(groupName);
+
+  await this.page.locator(`tr:has-text("${groupName}")`).first().click();
+  await this.editGroupButton.click();
+}
+
+
+
 }
 
 module.exports = { GroupPage };

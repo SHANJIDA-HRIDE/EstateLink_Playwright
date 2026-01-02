@@ -35,6 +35,8 @@ test.describe('UI | Role | Validation Rules', () => {
     await expect(rolePage.okButton).toBeVisible();
   });
 
+  
+
 
   test('Role description length >255 shows error', async ({ rolePage }) => {
     await rolePage.open();
@@ -45,6 +47,7 @@ test.describe('UI | Role | Validation Rules', () => {
       description: generateLongText(300),
       permissions: { createMember: true },
     });
+    
 
     await expect(rolePage.descriptionLimitError).toBeVisible();
   });
@@ -67,5 +70,7 @@ test.describe('UI | Role | Validation Rules', () => {
 
     await expect(rolePage.duplicateError).toBeVisible();
   });
+
+  
 
 });
