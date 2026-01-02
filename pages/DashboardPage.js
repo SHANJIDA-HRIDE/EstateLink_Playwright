@@ -1,3 +1,4 @@
+const { BASE_URL } = require('../utils/env');
 class DashboardPage {
   constructor(page) {
     this.page = page;
@@ -5,8 +6,8 @@ class DashboardPage {
     this.logoutLink = page.getByRole('link', { name: 'Logout' });
   }
 
-  async open() {
-    await this.page.goto('/');
+   async open() {
+    await this.page.goto(`${BASE_URL}/`);
   }
 
   async logout() {

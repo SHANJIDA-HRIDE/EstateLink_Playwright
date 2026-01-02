@@ -1,5 +1,5 @@
-function getRandomNumber() {
-  return Math.floor(Math.random()*3); // random 0-99999
+function getRandomNumber(max = 99999) {
+  return Math.floor(Math.random() * max);
 }
 
 module.exports = {
@@ -8,12 +8,8 @@ module.exports = {
     password: 'jklmctM1&@&',
   },
 
-    invalidUser: {
+  invalidUser: {
     email: 'shanjidahride@gmail.com',
-  },
-
-  invalidPassword: {
-    email: 'shanjidahride8@gmail.com',
     password: 'wrongPassword123',
   },
 
@@ -22,10 +18,10 @@ module.exports = {
     roleDescription: 'This is an automated test role.',
   },
 
-    groupData: {
+  groupData: {
     groupName: `TGp_${Date.now()}_${getRandomNumber()}`,
-    groupDescription: 'This is an automated test Group.',
+    groupDescription: 'This is an automated test group.',
   },
 
-
+  getRandomNumber,
 };
