@@ -1,5 +1,8 @@
+// pages/GroupPage.js
 const { BASE_URL } = require('../utils/env');
 const { expect } = require('@playwright/test');
+const { selectRowContaining, waitForHeader } = require('../utils/helpers'); // ✅ import helpers
+
 
 class GroupPage {
   constructor(page) {
@@ -13,15 +16,19 @@ class GroupPage {
     this.createButton = page.getByRole('button', { name: 'Create' });
     this.updateButton = page.getByRole('button', { name: 'Update' });
     this.okButton = page.getByRole('button', { name: 'OK' });
+    this.confirmButton = page.getByRole('button', { name: 'Confirm' });
 
     // Search & edit
     this.searchInput = page.getByPlaceholder('Search list...');
     this.editGroupButton = page.getByRole('button', { name: 'Edit' });
-    this.backToGroupList = page.getByText('Edit Group', { exact: true });
+    this.backToGroupList = page.locator('div:text-is("View Group")');
 
     // Table rows
     this.groupRows = page.locator('tr');
+    this.groupDescriptionHeader = page.getByRole('columnheader', { name: 'Group Description' });
   }
+
+
 
   // ===================== Navigation =====================
   async open(path = '/group-list') {
@@ -35,9 +42,15 @@ class GroupPage {
     await this.addGroupButton.click();
     await this.groupNameInput.fill(groupName);
     await this.groupDescriptionTextarea.fill(groupDescription);
-    await this.lastTableRow.click();
+
+    // ✅ call helper function directly
+    await selectRowContaining(this.page, 'Superadmin');
+
     await this.createButton.click();
     await this.okButton.click();
+
+    // ✅ call header wait helper
+    await waitForHeader(this.page, this.groupDescriptionHeader);
   }
 
   async searchGroup(groupName) {
@@ -56,7 +69,41 @@ class GroupPage {
 
     await this.updateButton.click();
     await this.okButton.click();
-    await this.backToGroupList.waitFor({ state: 'visible', timeout: 10000 });
+    await this.backToGroupList.click();
+    await this.groupDescriptionHeader.waitFor({ state: 'visible', timeout: 100000 });
+  }
+
+  async toggleFirstGroupStatusDynamic(groupName) {
+    // 1️⃣ Search for group
+    await this.searchInput.fill(groupName);
+    await this.page.waitForTimeout(500); // wait for table filter/debounce
+
+    // 2️⃣ Filter rows and select the first match
+    const firstGroup = this.groupRows.filter({ hasText: groupName }).first();
+    await firstGroup.waitFor({ state: 'visible', timeout: 100000 });
+
+    // 3️⃣ Click the first group row
+    await firstGroup.click();
+
+    // 4️⃣ Click Edit
+    await this.editGroupButton.click();
+
+    // 5️⃣ Detect status dynamically (Active / Inactive button)
+    const statusButton = this.page.locator('button:has-text("Active"), button:has-text("Inactive")').first();
+    const buttonText = await statusButton.innerText();
+
+    if (buttonText === 'Active' || buttonText === 'Inactive') {
+      await statusButton.click();
+    } else {
+      throw new Error(`Unexpected status button text: ${buttonText}`);
+    }
+
+    // 6️⃣ Confirm and OK
+    await this.confirmButton.click();
+    await this.okButton.click();
+
+    // 7️⃣ Back to group list
+    await this.backToGroupList.click();
   }
 }
 

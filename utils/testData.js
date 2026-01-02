@@ -4,8 +4,8 @@ function getRandomNumber() {
 
 module.exports = {
   validUser: {
-    email: 'hride.devtech@gmail.com',
-    password: '12345',
+    email: 'shanjidahride8@gmail.com',
+    password: 'jklmctM1&@&',
   },
 
     invalidUser: {

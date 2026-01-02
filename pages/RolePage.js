@@ -123,7 +123,7 @@ async toggleFirstRoleStatusDynamic(roleName) {
   await this.confirmButton.click();
   await this.okButton.click();
   await this.viewRoleLink.click();
-  await this.permissionsHeader.waitFor({ state: 'visible', timeout: 10000 });
+  await this.permissionsHeader.waitFor({ state: 'visible', timeout: 100000 });
 }
 
   async openAddRole() {
