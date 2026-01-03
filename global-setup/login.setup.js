@@ -1,31 +1,37 @@
 const { request } = require('@playwright/test');
 const fs = require('fs');
-const { validUser } = require('../utils/testData');
-const { api } = require('../utils/apiClient');
+const { API_BASE_URL } = require('../utils/env');
 
-async function loginAndStoreToken() {
-  // Create a Playwright APIRequestContext
-  const apiRequest = await request.newContext({ baseURL: 'http://127.0.0.1:8000' });
+module.exports = async () => {
+  const apiRequest = await request.newContext({
+    baseURL: API_BASE_URL,
+  });
 
-  // Login
   const payload = {
-    authenticator: validUser.email,
-    password: validUser.password,
+    authenticator: 'shanjidahride8@gmail.com',
+    password: 'jklmctM1&@&',
     login_type: 'org',
   };
 
-  const { status, body } = await api(apiRequest, 'post', '/user/login/', payload);
+  const response = await apiRequest.post('/user/login/', {
+    data: payload,
+  });
+
+  const status = response.status();
+  const body = await response.json();
+
+  console.log('Login status:', status);
+  console.log('Login body:', body);
 
   if (status !== 200 || !body.access_token) {
     throw new Error(`Login failed: ${status} | ${JSON.stringify(body)}`);
   }
 
-  // Save token to a JSON file
-  fs.writeFileSync('authToken.json', JSON.stringify({ token: body.access_token }));
-
-  console.log('✅ Login successful, token saved for all tests');
+  // ✅ Store token for API tests
+  fs.writeFileSync(
+    'authToken.json',
+    JSON.stringify({ token: body.access_token }, null, 2)
+  );
 
   await apiRequest.dispose();
-}
-
-module.exports = loginAndStoreToken;
+};

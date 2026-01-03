@@ -1,34 +1,32 @@
 const { defineConfig } = require('@playwright/test');
+const { BASE_URL, API_BASE_URL } = require('./utils/env');
 
 module.exports = defineConfig({
-  globalSetup: require.resolve('./global-setup/auth.setup'),
+  globalSetup: require.resolve('./global-setup/global.setup'),
 
-  use: {
-    browserName: 'chromium',
-    headless: false,
-    screenshot: 'on',
-    trace: 'on-first-retry',
-    video: 'on',
-    baseURL: require('./utils/env').BASE_URL,
-    storageState: 'auth.json',
-  },
+  reporter: [['html']],
 
   projects: [
     {
       name: 'UI',
+      testMatch: /tests\/ui\/.*\.spec\.js/,
       use: {
-        baseURL: require('./utils/env').BASE_URL,
+        browserName: 'chromium',
+        headless: false,
+        baseURL: BASE_URL,
         storageState: 'auth.json',
+        screenshot: 'on',
+        trace: 'on-first-retry',
+        video: 'on',
       },
     },
+
     {
       name: 'API',
+      testMatch: /tests\/api\/.*\.spec\.js/,
       use: {
-        baseURL: require('./utils/env').API_BASE_URL,
-        storageState: undefined,
+        baseURL: API_BASE_URL,
       },
     },
   ],
-
-  reporter: [['html']],
 });
